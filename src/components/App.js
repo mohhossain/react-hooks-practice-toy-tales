@@ -5,27 +5,36 @@ import ToyForm from "./ToyForm";
 import ToyContainer from "./ToyContainer";
 
 function App() {
-  const [showForm, setShowForm] = useState(false);
-  const [toyData, setToyData] = useState([])
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const [toys, setToys] = useState([]);
 
-  useEffect(()=> {
-    fetch("http://localhost:3001/toys")
-    .then(res => res.json())
-    .then(data=> setToyData(data))
-  }, [])
+  const handleClick = () => {
+    setIsButtonClicked(!isButtonClicked);
+  };
 
-  function handleClick() {
-    setShowForm((showForm) => !showForm);
-  }
+  const newToy = (toy) => {
+    console.log(toy, "this is from the app");
+    setToys([...toys, toy]);
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:3000/toys")
+      .then((res) => res.json())
+      .then((toys) => {
+        console.log(toys);
+        setToys(toys);
+      });
+  }, []);
 
   return (
     <>
       <Header />
-      {true ? <ToyForm toys={toyData} setToys={setToyData}/> : null}
+      {isButtonClicked ? <ToyForm newToy={newToy} /> : null}
+
       <div className="buttonContainer">
         <button onClick={handleClick}>Add a Toy</button>
       </div>
-      <ToyContainer toys={toyData}/>
+      <ToyContainer toys={toys} />
     </>
   );
 }
